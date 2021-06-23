@@ -24,6 +24,73 @@ uint8_t uFramePrepare(uint8_t dataLength)
 void uFrameSend(uint8_t dataLength, UART_HandleTypeDef *huart)
 {
 	uFramePrepare(dataLength);
-	HAL_UART_Transmit_IT(huart, UART.frameToSend, UART.frameLength);
+	HAL_UART_Transmit(huart, &UART.frameToSend[0], UART.frameLength, HAL_MAX_DELAY);
 }
+
+new_message_type receiveFrame()
+{
+	new_message_type result;
+	if(UART.fNewByte)
+	{
+		UART.fNewByte = 0;	// wyzeruj flagę nowego bajtu
+		if(UART.newByte == FRAME_START)
+		{
+			UART.ptrRecArray = &UART.recFrame[0];
+			UART.recbytes = 1;
+
+		}
+		else if(UART.recbytes == 1)
+		{
+			UART.recFrameLength = UART.newByte + 3;	// Zapisz długość odbieranej ramki
+			UART.recbytes++;
+		}
+		else if((UART.recbytes > 1) && (UART.recbytes < UART.recFrameLength - 1))	// - bajt końca ramki
+		{
+			*(UART.ptrRecArray++) = UART.newByte;	// Zapisz w tablicy nowy bajt
+			UART.recbytes++;
+		}
+		else if(UART.recbytes == UART.recFrameLength - 1)	// Jeśli odebrano odpowiednią liczbę bajtów
+		{
+			if(UART.newByte== FRAME_END)	// Jeśli ostatni bajt jest jak końcowy bajt
+			{
+				UART.blinkCounter = 2 * (UART.recFrameLength - 3);	// Zamrugaj odpowiednią liczbę bajtów
+				UART.blinkDelay = UDelay;	// zacznij mrugać
+				result = nm_newMessage;
+			}
+			else
+			{
+				result = nm_frameError;	// jeśli nie to zgłoś błąd
+			}
+			UART.recbytes = 0;
+		}
+		else
+		{
+			result = nm_none;
+		}
+
+	}
+	else
+	{
+		result = nm_none;
+	}
+	return result;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

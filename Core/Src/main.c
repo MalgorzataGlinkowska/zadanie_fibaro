@@ -61,7 +61,8 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
 	if(huart->Instance == USART1)	// Sprawdz, czy przerwanie jest z uart1
 	{
-		UNUSED(1);
+		UART.fNewByte = 1;	// Ustaw flagę nowego bajtu
+		UART.newByte = rxBuffor;	// Zapisz nowy bajt
 		HAL_UART_Receive_IT(&huart1, &rxBuffor, 1);
 	}
 }
@@ -114,9 +115,14 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  uFrameSend(5, &huart1);
+//  uFrameSend(5, &huart1);
   while (1)
   {
+
+	  if(receiveFrame() == nm_newMessage)
+	  {
+
+	  }
 
 	  if(BTN1_PUSHED())	// Jeśli przycisk jest wciśnięty
 	  {
