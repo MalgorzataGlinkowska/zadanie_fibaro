@@ -22,6 +22,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "uart.h"
 #include "fib-lib.h"
 /* USER CODE END Includes */
 
@@ -65,6 +66,17 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 	}
 }
 
+//void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
+//{
+//	if(huart->Instance == USART1)	// Upewnij się, że o ciebie chodzi
+//	{
+////		LED_ON();
+//////		TIME.button_debounce = 50;
+//////		while(TIME.button_debounce > 0);
+////		LED_OFF();
+//	}
+//}
+
 /* USER CODE END 0 */
 
 /**
@@ -102,6 +114,7 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  uFrameSend(5, &huart1);
   while (1)
   {
 

@@ -10,6 +10,7 @@
 
 #define LED_ON()		do{HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, 1);}while(0)	///< Załączenie diody
 #define LED_OFF()		do{HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, 0);}while(0)	///< Wyłączenie diody
+#define LED_TOGGLE()	do{HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);}while(0);	///< Zmiana stanu diody
 
 struct flagi{
 	uint8_t button_pushed	:1;	///< Flaga wciśnięcia przycisku

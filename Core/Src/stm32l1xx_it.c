@@ -24,6 +24,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "fib-lib.h"
+#include "uart.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -193,6 +194,19 @@ void SysTick_Handler(void)
   {
 	  TIME.button_debounce--;
   }
+  if(UART.blinkDelay > 0)
+  {
+	  if(--UART.blinkDelay == 0)
+	  {
+		  if(UART.blinkCounter > 0)
+		  {
+			  UART.blinkCounter--;
+			  LED_TOGGLE();
+			  UART.blinkDelay = UDelay;
+		  }
+	  }
+  }
+
   /* USER CODE END SysTick_IRQn 1 */
 }
 
