@@ -45,6 +45,7 @@ UART_HandleTypeDef huart1;
 
 /* USER CODE BEGIN PV */
 uint8_t rxBuffor;
+uint8_t buttPushCounter;	///< Zmienna zliczająca liczbę przyciśnięć przycisku
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -111,6 +112,8 @@ int main(void)
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
   HAL_UART_Receive_IT(&huart1, &rxBuffor, 1);
+
+  TIME.mod_100ms = MOD_100ms; // Uruchom timer 100ms
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -133,7 +136,7 @@ int main(void)
 		  }
 		  else if(FLAG.button_pushed && TIME.button_debounce == 0) // Jeśłi przycisk jest wciśnięty i minął czas debounce
 		  {
-			  LED_ON();
+//			  LED_ON();
 		  }
 	  }
 	  else // Jak przycisk jest puszczony
@@ -145,8 +148,21 @@ int main(void)
 		  }
 		  else if(TIME.button_debounce == 1)	// 1 żeby wszedł tu tylko raz
 		  {
-			  LED_OFF();
+			  TIME.button_debounce = 0;
+			  TIME.buttTimeout = BUTT_TIME; // Ustaw timeout oczekiwania na nowe kliknięcie [1s]
+			  buttPushCounter++;
+			  if(buttPushCounter == 30)	// 30 to max kliknięć
+			  {
+				  TIME.buttTimeout = 0;
+				  FLAG.butTimeout = 1;
+			  }
 		  }
+	  }
+	  if(FLAG.butTimeout)	// Jak minął czas kilkania
+	  {
+		  FLAG.butTimeout = 0;	// Wyzzeruj flagę, zęby się nie powtarzało
+		  uFrameSend(buttPushCounter, &huart1); // Wyślij ramkę
+		  buttPushCounter = 0;	// Wyzeruj liczbę kliknięć
 	  }
 
 

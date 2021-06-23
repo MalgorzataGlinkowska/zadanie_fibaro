@@ -206,6 +206,21 @@ void SysTick_Handler(void)
 		  }
 	  }
   }
+  if(TIME.mod_100ms > 0)
+  {
+	  if(--TIME.mod_100ms == 0)
+	  {
+		  TIME.mod_100ms = MOD_100ms;	// Odśwież timer
+
+		  if(TIME.buttTimeout > 0)
+		  {
+			  if(--TIME.buttTimeout == 0)
+			  {
+				  FLAG.butTimeout = 1;	// Czas wysłać ramkę
+			  }
+		  }
+	  }
+  }
 
   /* USER CODE END SysTick_IRQn 1 */
 }
