@@ -22,7 +22,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "fib-lib.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -104,6 +104,33 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+
+	  if(BTN1_PUSHED())	// Jeśli przycisk jest wciśnięty
+	  {
+		  if(FLAG.button_pushed == 0)	// jeśli wcześniej nie był wciśnięty
+		  {
+			  FLAG.button_pushed = 1;	// To ustaw flagę wciśnięcia przycisku
+			  TIME.button_debounce = BTN_DEBOUNCE; // I czas na stabilizację stanu przycisku
+		  }
+		  else if(FLAG.button_pushed && TIME.button_debounce == 0) // Jeśłi przycisk jest wciśnięty i minął czas debounce
+		  {
+			  LED_ON();
+		  }
+	  }
+	  else // Jak przycisk jest puszczony
+	  {
+		  if(FLAG.button_pushed == 1)	// Jeśłi wcześniej był wciśniety
+		  {
+			  FLAG.button_pushed = 0;	// Wyzeruj flagę przycisku
+			  TIME.button_debounce = BTN_DEBOUNCE;
+		  }
+		  else if(TIME.button_debounce == 1)	// 1 żeby wszedł tu tylko raz
+		  {
+			  LED_OFF();
+		  }
+	  }
+
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
