@@ -4,12 +4,16 @@
 #include "stm32l1xx_hal.h"
 
 
+
 #define FRAME_START 0xAC	///< Znak startu ramki
 #define FRAME_END	0xDC	///< Znak końca ramki
+#define FRAME_ACK	0xAA	///< Znak poprawności odebranej ramki
+#define FRAME_NAK	0xCC	///< Znak błędu odebranej ramki
+
 #define FRAME_SIZE	33		///< Maksymalny rozmiar ramki
 #define FRAME_CLICK	30		///< Maksymalna liczba kliknięć
 
-#define UDelay	100			///< Przerwa między zmianami stanu diody
+#define UDelay		100		///< Przerwa między zmianami stanu diody
 
 struct uartStruct{
 	uint8_t frameLength;	///< Długość przygotowywanej ramki
@@ -51,6 +55,23 @@ void uFrameSend(uint8_t dataLength, UART_HandleTypeDef *huart);
 
 /**
  * @brief Funkcja obsługująca odebrane bajty
+ *
+ * @param huart Uchwyt do struktury UART
  */
-new_message_type receiveFrame();
+new_message_type receiveFrame(UART_HandleTypeDef *huart);
+
+/**
+ * @brief Funkcja wysyłająca potwierdzenie odebrania kompletnej ramki
+ *
+ * @param huart Uchwyt do struktury UART
+ */
+void sendACK(UART_HandleTypeDef *huart);
+
+/**
+ * @brief Funkcja wysyłająca informację o odebraniu błędnej ramki
+ *
+ * @param huart Uchwyt do struktury UART
+ */
+void sendNAK(UART_HandleTypeDef *huart);
+
 #endif /* INC_UART_H_ */

@@ -34,7 +34,6 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -219,6 +218,7 @@ void SysTick_Handler(void)
 				  FLAG.butTimeout = 1;	// Czas wysłać ramkę
 			  }
 		  }
+
 	  }
   }
 

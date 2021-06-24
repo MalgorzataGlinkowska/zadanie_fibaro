@@ -1,5 +1,6 @@
 #include "uart.h"
 
+
 uint8_t uFramePrepare(uint8_t dataLength)
 {
 	UART.ptrArray = &UART.frameToSend[0];	// Zapisz wskaźnik na początek tablicy
@@ -25,9 +26,10 @@ void uFrameSend(uint8_t dataLength, UART_HandleTypeDef *huart)
 {
 	uFramePrepare(dataLength);
 	HAL_UART_Transmit(huart, &UART.frameToSend[0], UART.frameLength, HAL_MAX_DELAY);
+
 }
 
-new_message_type receiveFrame()
+new_message_type receiveFrame(UART_HandleTypeDef *huart)
 {
 	new_message_type result;
 	if(UART.fNewByte)
@@ -55,10 +57,12 @@ new_message_type receiveFrame()
 			{
 				UART.blinkCounter = 2 * (UART.recFrameLength - 3);	// Zamrugaj odpowiednią liczbę bajtów
 				UART.blinkDelay = UDelay;	// zacznij mrugać
+				sendACK(huart);	// Wyślij potwierdzenie odbioru
 				result = nm_newMessage;
 			}
 			else
 			{
+				sendNAK(huart);	// Wyślij błąd ramki
 				result = nm_frameError;	// jeśli nie to zgłoś błąd
 			}
 			UART.recbytes = 0;
@@ -76,8 +80,31 @@ new_message_type receiveFrame()
 	return result;
 }
 
+void sendACK(UART_HandleTypeDef *huart)
+{
+	UART.frameToSend[0] = FRAME_START;
+	UART.frameToSend[1] = 1;
+	UART.frameToSend[2] = FRAME_ACK;
+	UART.frameToSend[3] = FRAME_END;
 
+	HAL_UART_Transmit(huart, UART.frameToSend, 4, HAL_MAX_DELAY);
 
+//	UART.blinkCounter = 2;	// Zamrugaj raz
+//	UART.blinkDelay = UDelay;	// zacznij mrugać
+}
+
+void sendNAK(UART_HandleTypeDef *huart)
+{
+	UART.frameToSend[0] = FRAME_START;
+	UART.frameToSend[1] = 1;
+	UART.frameToSend[2] = FRAME_NAK;
+	UART.frameToSend[3] = FRAME_END;
+
+	HAL_UART_Transmit(huart, UART.frameToSend, 4, HAL_MAX_DELAY);
+
+//	UART.blinkCounter = 2;	// Zamrugaj raz
+//	UART.blinkDelay = UDelay;	// zacznij mrugać
+}
 
 
 

@@ -46,6 +46,7 @@ UART_HandleTypeDef huart1;
 /* USER CODE BEGIN PV */
 uint8_t rxBuffor;
 uint8_t buttPushCounter;	///< Zmienna zliczająca liczbę przyciśnięć przycisku
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -122,7 +123,7 @@ int main(void)
   while (1)
   {
 
-	  if(receiveFrame() == nm_newMessage)
+	  if(receiveFrame(&huart1) == nm_newMessage)
 	  {
 
 	  }
